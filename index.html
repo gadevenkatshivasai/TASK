@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Web App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen active container text-center mt-5">
+        <h1>TO DO LIST</h1>
+        <div class="mb-3">
+            <input id="username" type="text" class="form-control" placeholder="Username">
+        </div>
+        <div class="mb-3">
+            <input id="password" type="password" class="form-control" placeholder="Password">
+        </div>
+        <button class="btn btn-primary" onclick="login()">Login</button>
+    </div>
+
+    <!-- Main Screen (Navigation Page) -->
+    <div id="main-screen" class="screen container text-center mt-5" style="display: none;">
+        <h1>Task</h1>
+        <div class="d-grid gap-3">
+            <button class="btn btn-primary" onclick="switchScreen('todo-screen')">ToDo</button>
+            <button class="btn btn-primary" onclick="switchScreen('diary-screen')">Diary</button>
+            <button class="btn btn-primary" onclick="switchScreen('bucketlist-screen')">Bucket List</button>
+            <button class="btn btn-primary" onclick="switchScreen('goals-screen')">Goals</button>
+            <button class="btn btn-primary" onclick="switchScreen('financial-tracker-screen')">Financial Tracker</button>
+        </div>
+    </div>
+
+    <!-- ToDo Screen -->
+    <div id="todo-screen" class="screen container mt-5" style="display: none;">
+        <button class="btn btn-secondary mb-3" onclick="switchScreen('main-screen')">Back</button>
+        <div class="mb-3">
+            <input id="todo-input" type="text" class="form-control" placeholder="Enter a task" onkeypress="if(event.key === 'Enter') addTask()">
+        </div>
+        <div class="mb-3">
+            <input type="date" id="todo-deadline" class="form-control" placeholder="Set Deadline">
+        </div>
+        <div class="mb-3">
+            <select id="todo-priority" class="form-select">
+                <option value="Low">Low Priority</option>
+                <option value="Medium">Medium Priority</option>
+                <option value="High">High Priority</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <input id="todo-category" type="text" class="form-control" placeholder="Category">
+        </div>
+        <button class="btn btn-success mb-3" onclick="addTask()">Add Task</button>
+        <div id="todo-list" class="list-group"></div>
+        <button class="btn btn-info mt-3" onclick="showCompletedTasks()">View Completed Tasks</button>
+    </div>
+
+    <!-- Completed Tasks Modal -->
+    <div class="modal fade" id="completedTasksModal" tabindex="-1" aria-labelledby="completedTasksModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="completedTasksModalLabel">Completed Tasks</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="completed-tasks-list" style="list-style-type: none; padding: 0;"></ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diary Screen -->
+<div id="diary-screen" class="screen container mt-5" style="display: none;">
+    <button class="btn btn-secondary mb-3" onclick="switchScreen('main-screen')">Back</button>
+    <input type="date" id="diary-filter" class="form-control mb-3" onchange="filterDiary()">
+    <textarea id="diary-input" class="form-control mb-3" rows="5" placeholder="Write your diary entry here..."></textarea>
+    <button class="btn btn-success" onclick="saveDiaryEntry()">Save Entry</button>
+
+    <!-- Display Saved Diary Entries Here -->
+    <div id="diary-cards-container" class="mt-4">
+        <!-- Diary cards will be dynamically added here -->
+    </div>
+</div>
+
+<!-- Save Confirmation Modal -->
+<div class="modal fade" id="saveConfirmationModal" tabindex="-1" aria-labelledby="saveConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="saveConfirmationModalLabel">Save Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Your diary entry has been saved successfully!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Bucket List Screen -->
+<div id="bucketlist-screen" class="screen container mt-5" style="display: none;">
+    <button class="btn btn-secondary mb-3" onclick="switchScreen('main-screen')">Back</button>
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Bucket List Item</h5>
+            <div class="form-group">
+                <label for="category-input">Category</label>
+                <input type="text" class="form-control" id="category-input" placeholder="Enter category">
+            </div>
+            <div class="form-group mt-3">
+                <label for="name-input">Name</label>
+                <input type="text" class="form-control" id="name-input" placeholder="Enter name">
+            </div>
+            <button class="btn btn-success mt-3" onclick="saveBucketListItem()">Save Item</button>
+        </div>
+    </div>
+    <div class="mt-4">
+        <h5>Your Bucket List</h5>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="bucketlist-table-body">
+                <!-- Bucket list items will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+  <!-- Goals Screen -->
+  <div id="goals-screen" class="screen container mt-5">
+    <button class="btn btn-secondary mb-3" onclick="switchScreen('main-screen')">Back</button>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Add a Goal</h5>
+            <div class="form-group mb-3">
+                <label for="goal-category">Category</label>
+                <select id="goal-category" class="form-select">
+                    <option value="Weekly">Weekly Goals</option>
+                    <option value="Monthly">Monthly Goals</option>
+                    <option value="Quarterly">Quarterly Goals</option>
+                    <option value="Yearly">Yearly Goals</option>
+                    <option value="3-Year">3-Year Goals</option>
+                </select>
+            </div>
+            <div class="form-group mb-3">
+                <label for="goal-name">Goal</label>
+                <input type="text" id="goal-name" class="form-control" placeholder="Enter your goal">
+            </div>
+            <button class="btn btn-success" onclick="saveGoal()">Save Goal</button>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <h5>Your Goals</h5>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Goal</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="goals-table-body">
+                <!-- Goals will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+    <!-- Financial Tracker Screen -->
+<div id="financial-tracker-screen" class="screen container mt-5" style="display: none;">
+    <button class="btn btn-secondary mb-3" onclick="switchScreen('main-screen')">Back</button>
+    <div id="financial-summary" class="mb-3">
+        <input type="number" id="income-input" class="form-control mb-2" placeholder="Add Income">
+        <input type="number" id="expense-input" class="form-control mb-2" placeholder="Add Expense">
+        <button class="btn btn-success" onclick="addFinancialEntry()">Add Entry</button>
+    </div>
+    <div id="financial-report">
+        <input type="month" id="financial-filter" class="form-control" onchange="filterFinancialReport()">
+    </div>
+    <div id="financial-entries" class="mt-3">
+        <h5>Entries</h5>
+        <ul id="entry-list" class="list-group">
+            <!-- Entries will be dynamically added here -->
+        </ul>
+    </div>
+    <div id="financial-totals" class="mt-3">
+        <h5>Totals</h5>
+        <p id="total-income">Total Income: $0</p>
+        <p id="total-expense">Total Expense: $0</p>
+    </div>
+</div>
+
+
+    <script>
+        // JavaScript functions
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === 'vss' && password === '2001') {
+                switchScreen('main-screen');
+            } else {
+                alert('Invalid credentials. Please try again.');
+            }
+        }
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.style.display = 'none';
+            });
+            document.getElementById(screenId).style.display = 'block';
+        }
+
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        let completedTasks = JSON.parse(localStorage.getItem('completedTasks')) || [];
+
+        function addTask() {
+            const task = document.getElementById('todo-input').value;
+            const deadline = document.getElementById('todo-deadline').value;
+            const priority = document.getElementById('todo-priority').value;
+            const category = document.getElementById('todo-category').value;
+
+            if (task === "") {
+                alert("Please enter a task.");
+                return;
+            }
+
+            const taskItem = {
+                text: task,
+                deadline: deadline,
+                priority: priority,
+                category: category,
+                completed: false
+            };
+
+            tasks.push(taskItem);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            displayTasks();
+            
+            document.getElementById('todo-input').value = '';
+            document.getElementById('todo-deadline').value = '';
+            document.getElementById('todo-priority').value = 'Low';
+            document.getElementById('todo-category').value = '';
+        }
+
+        function displayTasks() {
+            const todoList = document.getElementById('todo-list');
+            todoList.innerHTML = '';
+
+            tasks.forEach((task, index) => {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+                taskDiv.innerHTML = `
+                    <div>
+                        <strong>${task.text}</strong> 
+                        <small class="text-muted">(${task.category})</small>
+                    </div>
+                    <div class="text-muted">
+                        <span class="me-2">Deadline: ${task.deadline}</span>
+                        <span class="me-2">Priority: ${task.priority}</span>
+                        <button class="btn btn-success btn-sm me-2" onclick="completeTask(${index})">Complete</button>
+                        <button class="btn btn-danger btn-sm" onclick="removeTask(${index})">Delete</button>
+                    </div>
+                `;
+
+                todoList.appendChild(taskDiv);
+            });
+        }
+
+        function completeTask(index) {
+            tasks[index].completed = true;
+            completedTasks.push(tasks[index]);
+            tasks.splice(index, 1);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
+            displayTasks();
+        }
+
+        function removeTask(index) {
+            tasks.splice(index, 1);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            displayTasks();
+        }
+
+        function showCompletedTasks() {
+            const completedTasksList = document.getElementById('completed-tasks-list');
+            completedTasksList.innerHTML = '';
+
+            completedTasks.forEach((task, index) => {
+                const taskItem = document.createElement('li');
+                taskItem.innerHTML = `
+                    <input type="checkbox" id="task-${index}" checked disabled>
+                    <label for="task-${index}">${task.text} - ${task.deadline} - ${task.priority} - ${task.category}</label>
+                `;
+                completedTasksList.appendChild(taskItem);
+            });
+
+            const completedTasksModal = new bootstrap.Modal(document.getElementById('completedTasksModal'));
+            completedTasksModal.show();
+        }
+
+        function saveDiaryEntry() {
+            const selectedDate = document.getElementById('diary-filter').value;
+            const diaryContent = document.getElementById('diary-input').value;
+
+            if (!selectedDate) {
+                alert("Please select a date.");
+                return;
+            }
+
+            if (diaryContent === "") {
+                alert("Please write something in your diary.");
+                return;
+            }
+
+            let diaryEntries = JSON.parse(localStorage.getItem('diaryEntries')) || {};
+            diaryEntries[selectedDate] = diaryContent;
+
+            localStorage.setItem('diaryEntries', JSON.stringify(diaryEntries));
+
+            const saveConfirmationModal = new bootstrap.Modal(document.getElementById('saveConfirmationModal'));
+            saveConfirmationModal.show();
+
+            document.getElementById('diary-input').value = '';
+            displayDiaryCard(selectedDate, diaryContent);
+        }
+
+        function displayDiaryCard(date, content) {
+            const diaryCardsContainer = document.getElementById('diary-cards-container');
+
+            const card = document.createElement('div');
+            card.className = 'card mb-3';
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <strong>Date:</strong> ${date}
+                </div>
+                <div class="card-body">
+                    <p class="card-text">${content}</p>
+                </div>
+            `;
+
+            diaryCardsContainer.appendChild(card);
+        }
+
+        function filterDiary() {
+            const selectedDate = document.getElementById('diary-filter').value;
+            const diaryEntries = JSON.parse(localStorage.getItem('diaryEntries')) || {};
+
+            if (diaryEntries[selectedDate]) {
+                document.getElementById('diary-input').value = diaryEntries[selectedDate];
+            } else {
+                document.getElementById('diary-input').value = '';
+            }
+        }
+
+        function saveBucketListItem() {
+            const category = document.getElementById('category-input').value;
+            const name = document.getElementById('name-input').value;
+
+            if (!category || !name) {
+                alert("Please fill out both fields.");
+                return;
+            }
+
+            let bucketList = JSON.parse(localStorage.getItem('bucketList')) || [];
+            const newItem = { category, name };
+
+            bucketList.push(newItem);
+            localStorage.setItem('bucketList', JSON.stringify(bucketList));
+
+            document.getElementById('category-input').value = '';
+            document.getElementById('name-input').value = '';
+
+            displayBucketList();
+        }
+
+        function displayBucketList() {
+            const bucketList = JSON.parse(localStorage.getItem('bucketList')) || [];
+            const tableBody = document.getElementById('bucketlist-table-body');
+
+            tableBody.innerHTML = '';
+
+            bucketList.forEach((item, index) => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${item.category}</td>
+                    <td>${item.name}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deleteBucketListItem(${index})">Delete</button>
+                    </td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        function deleteBucketListItem(index) {
+            let bucketList = JSON.parse(localStorage.getItem('bucketList')) || [];
+            bucketList.splice(index, 1);
+
+            localStorage.setItem('bucketList', JSON.stringify(bucketList));
+
+            displayBucketList();
+        }
+        let goals = JSON.parse(localStorage.getItem('goals')) || [];
+
+function saveGoal() {
+    const category = document.getElementById('goal-category').value;
+    const name = document.getElementById('goal-name').value;
+
+    if (name === '') {
+        alert('Please enter a goal.');
+        return;
+    }
+
+    // Add the new goal to the list
+    const goal = { category, name };
+    goals.push(goal);
+
+    // Save the updated goals list to localStorage
+    localStorage.setItem('goals', JSON.stringify(goals));
+
+    // Clear the input fields
+    document.getElementById('goal-category').value = 'Weekly';
+    document.getElementById('goal-name').value = '';
+
+    // Update the displayed goals
+    displayGoals();
+}
+
+function displayGoals() {
+    const goalsTableBody = document.getElementById('goals-table-body');
+    goalsTableBody.innerHTML = '';
+
+    // Iterate over the goals and create table rows
+    goals.forEach((goal, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${goal.category}</td>
+            <td>${goal.name}</td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteGoal(${index})">Delete</button>
+            </td>
+        `;
+        goalsTableBody.appendChild(row);
+    });
+}
+
+function deleteGoal(index) {
+    // Remove the goal from the list
+    goals.splice(index, 1);
+
+    // Update localStorage
+    localStorage.setItem('goals', JSON.stringify(goals));
+
+    // Update the displayed goals
+    displayGoals();
+}
+
+// Load and display goals when the page loads
+window.onload = function() {
+    displayGoals();
+};
+function openStory(storyName) {
+    // Example function for opening a story
+    alert(`Opening ${storyName}`);
+    // Implement the actual logic for opening the story
+}
+function addFinancialEntry() {
+        const income = document.getElementById('income-input').value;
+        const expense = document.getElementById('expense-input').value;
+        const entryList = document.getElementById('entry-list');
+        const date = new Date().toISOString().split('T')[0]; // Use today's date
+
+        if (income || expense) {
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item';
+            listItem.textContent = `Date: ${date} | Income: $${income || 0} | Expense: $${expense || 0}`;
+            listItem.setAttribute('data-month', date.slice(0, 7)); // Set month for filtering
+            entryList.appendChild(listItem);
+
+            // Clear inputs after adding
+            document.getElementById('income-input').value = '';
+            document.getElementById('expense-input').value = '';
+
+            // Update totals
+            updateTotals();
+        } else {
+            alert('Please enter income or expense.');
+        }
+    }
+
+    function filterFinancialReport() {
+        const selectedMonth = document.getElementById('financial-filter').value;
+        const entries = document.querySelectorAll('#entry-list .list-group-item');
+
+        entries.forEach(entry => {
+            const entryMonth = entry.getAttribute('data-month');
+            entry.style.display = entryMonth === selectedMonth ? '' : 'none';
+        });
+    }
+
+    function updateTotals() {
+        const entries = document.querySelectorAll('#entry-list .list-group-item');
+        let totalIncome = 0;
+        let totalExpense = 0;
+
+        entries.forEach(entry => {
+            const text = entry.textContent;
+            const incomeMatch = text.match(/Income: \$(\d+)/);
+            const expenseMatch = text.match(/Expense: \$(\d+)/);
+
+            if (incomeMatch) totalIncome += parseFloat(incomeMatch[1]);
+            if (expenseMatch) totalExpense += parseFloat(expenseMatch[1]);
+        });
+
+        document.getElementById('total-income').textContent = `Total Income: $${totalIncome}`;
+        document.getElementById('total-expense').textContent = `Total Expense: $${totalExpense}`;
+    }
+
+
+
+            </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.22.2/docxtemplater.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
